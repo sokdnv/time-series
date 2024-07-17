@@ -47,3 +47,4 @@ referencing~=0.35.1
 cycler~=0.12.1
 kiwisolver~=1.4.5
 streamlit~=1.36.0
+salesforce-merlion~=2.0.4
