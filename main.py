@@ -6,6 +6,7 @@ from merlion.models.forecast.trees import LGBMForecaster, LGBMForecasterConfig
 from merlion.models.forecast.arima import Sarima, SarimaConfig
 from merlion.evaluate.forecast import ForecastMetric
 import matplotlib.pyplot as plt
+
 plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-dark.mplstyle')
 
 st.title('Считаем временные ряды')
@@ -74,12 +75,19 @@ if st.session_state.submit_m:
         forecast, stderr = model.forecast(time_stamps=test_series.time_stamps)
         forecast_values = forecast.to_pd()
 
+        extra_steps = int(len(st.session_state.file) * 2)
+        future_time_stamps = pd.date_range(start=data_test.index[-1], periods=extra_steps + 1, freq='D')[1:]
+        future_forecast, future_stderr = model.forecast(time_stamps=future_time_stamps)
+        future_forecast_values = future_forecast.to_pd()
+
+        combined_forecast_values = pd.concat([forecast_values, future_forecast_values])
+
         mae = ForecastMetric.MAE.value(data_test.iloc[:, 0], forecast_values.iloc[:, 0])
 
         fig = plt.figure(figsize=(20, 15))
         plt.plot(data_train.index, data_train.iloc[:, 0], label='Train')
         plt.plot(data_test.index, data_test.iloc[:, 0], label='Test', color='orange')
-        plt.plot(forecast_values.index, forecast_values.iloc[:, 0], label='Forecast', color='red')
+        plt.plot(combined_forecast_values.index, combined_forecast_values.iloc[:, 0], label='Forecast', color='red')
         plt.legend()
         plt.title('Model Forecast vs Actuals')
 
