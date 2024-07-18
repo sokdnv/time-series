@@ -13,7 +13,6 @@ st.title('Считаем временные ряды')
 st.caption('вместе с Серёжей')
 st.divider()
 
-# Инициализация переменных состояния сессии
 if 'submit_m' not in st.session_state:
     st.session_state.submit_m = None
 
@@ -33,7 +32,7 @@ with st.sidebar:
     button = st.button('Использовать тестовый файл')
     if button:
         st.session_state.file = pd.read_csv('test.csv', index_col=0, parse_dates=True)
-    if st.session_state.file is not None and not st.session_state.file.empty:
+    if st.session_state.file is not None:
         with st.form(key='model'):
             st.radio('Модель', options=['LGBM', 'Prophet', 'SARIMA'], key='model')
             submit_m = st.form_submit_button('Выбрать')
